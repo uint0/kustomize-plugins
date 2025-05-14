@@ -1,0 +1,29 @@
+name: 🚀 Publish Plugins
+
+on:
+  push:
+    branches:
+      - release
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  docker-compose-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🔨 Build and Push Plugins
+        run: COMPOSE_BAKE=true docker compose build --push

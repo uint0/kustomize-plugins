@@ -1,0 +1,5 @@
+services:
+  yq-transformer:
+    image: ghcr.io/uint0/kustomize-plugins/yq-transformer:latest
+    build:
+      context: ./plugins/yq-transformer

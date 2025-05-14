@@ -1,0 +1,32 @@
+# Kustomize Plugins
+
+Some plugins for kustomize.
+
+## YQTransformer
+
+Transform resources using [`yq`](https://mikefarah.gitbook.io/yq) syntax.
+
+**Example Usage**
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ./deployment.yaml
+
+transformers:
+  - |-
+    apiVersion: plugins.uint0.dev/v1
+    kind: YQTransformer
+    metadata:
+      name: add-pod-security-context
+      annotations:
+        config.kubernetes.io/function: |
+          container:
+            image: ghcr.io/uint0/kustomize-plugins/yq-transformer:latest
+        config.kubernetes.io/local-config: "true"
+    spec:
+      transformations:
+      - select: '.kind == "Deployment"'
+        apply: '.spec.template.spec.containers[].securityContext.privileged |= (. // false)'
+```
